@@ -29,12 +29,16 @@ def main():
     y_train = training_data['DealType']
 
     #Train Classification models
-    classifier = DecisionTreeClassifier(criterion='log_loss', class_weight='balanced')
+    #classifier = DecisionTreeClassifier()
+    classweight = {0: 2.36875, 1: 1, 2:5.36320754717}
+    classifier = DecisionTreeClassifier(criterion='log_loss', class_weight=classweight)
     classifier.fit(x_train, y_train)
 
+    #classifierTwo = LabelPropagation()
     classifierTwo = LabelPropagation(kernel='knn', max_iter=2000)
     classifierTwo.fit(x_train, y_train)
 
+    #classifierThree = MLPClassifier()    
     classifierThree = MLPClassifier(random_state=10)
     classifierThree.fit(x_train, y_train)
 

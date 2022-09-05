@@ -1,50 +1,94 @@
-# ACM Research coding challenge (Fall 2022)
+# Classification Modeling Using SkLearn
 
-Note: if it's getting down to the deadline (September 5th at 11:59 CT) and you don't think you will be able to submit your project on time, just [submit](http://apply.acmutd.co/research-coding-challenge) whatever you have!
+## Problem
+I wanted to make a model that if fed some inputs predicts the cars deal type (great, good, fair).
+I also sought out to determine the best suited, high accuracy model for this particualr multiclass classification model.
 
-This semester's challenge is especially open-ended. [Here is a dataset](https://www.kaggle.com/datasets/chancev/carsforsale) on Kaggle called "CarsForSale". It contains data scraped from the online car marketplace Cars.com. Each row contains 25 pieces of information about a car's listing, such as its price, year, model, and color.
+## How I solved it
+I used the pre-existing models in the <a href="https://scikit-learn.org/stable/">sklearn library</a> to basically do multiclass classification using the data provided.
+Since sklearn does not allow string inputs to its models, I had to do some preprocessing on the data provided.
+Most of the preprocessing was done in <a href="src/preprocessing.py">preprocessing.py</a>. 
+I got rid of any columns from that contained strings.
+ 
+> Columns that were axed: <br/>
+ Make , Model ,  Used/New , SellerType ,  SellerName ,  StreetName ,  State ,  ExteriorColor ,  InteriorColor ,  Drivetrain ,  FuelType ,  Transmission ,  Engine ,  VIN ,  Stock# 
 
-The challenge is to do *something interesting* with the data. Can you find a pattern, answer a question, or create a visualization? In case nothing comes to mind, here are some ideas, with varying complexity:
+I also had to go through the Zipcodes to clear any non numerical value.
+After doing all of this I also went in to seperate some 80% of the data to be for training the models, and the 20% for testing the models.
+I could have used the sklearn prepocessing to seperate the data but at the time I did not know of it. 
+While doing all of this I also replaced the DealType values with numerical representations. 
+All of this was done using the <a href="https://pandas.pydata.org/">Pandas</a> library.
 
-- What qualities about a car do buyers seem to value the most?
-- Make a graph to visualize the most popular car models over time.
-- What colors of cars are most expensive?
-- Do different brands try to appeal to people looking for different things?
-- Come up with your own algorithm to figure out how good of a deal a listing is and compare it to the one in the dataset (`DealType`).
-- Use [cluster analysis](https://en.wikipedia.org/wiki/Cluster_analysis) to group the cars into categories.
-- How do people's taste in cars differ between states?
-- Train a machine learning model to predict some aspect of a car based on other information from its listing.
+> I think now it is best to mention the fact that I have not worked with sklearn before and this show's in my lack of understanding of its structure and models.<br/>
+I took this oppurtuinity for the research coding challenge to learn more about sklearn and machine learning.</br>
 
-However, we strongly encourage you to come up with your own problem to solve!
+What I had left after all the preprocessing was a really nice numerical data set of car listings to determine if a listing was great, good, or fair deal.
 
-You can use any programming language, framework, or library you want, but we recommend [creating a notebook in Kaggle](https://www.kaggle.com/docs/notebooks) and using Python. This will run in your browser, interlaces code with documentation, allows you to import the CarsForSale dataset easily by pressing the "Add data" button, and gives you access to Python's high-quality, high-level libraries for working with data. [Learn more about data science in Python.](https://www.w3schools.com/datascience/ds_python.asp)
+After all the preprocessing was done, and the preprocessed info was saved in new csv files in the <a href="/data">data folder</a>, I moved on to training the multiclass classification models. This training was done in the <a href="/src/training.py">training.py file</a>. The main purpose, was to see which model performed better in predicting the classification after being trained. I used three models from sklearn that natively supported multiclass classificatin: **DecisionTreeClassifier**, **MLPClassifier**, and **LabelPropagation**.
 
-## How to submit your solution
+The base models for DecisionTreeClassifer, and LabelPropagation performed poorly interms of accuracy of their predictions. See figures 1.1, and 1.2 for a visualization of the results.  
 
-1. [Create a **public** fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of this repository and name it  `ACM-Research-coding-challenge-22F` (click the "Fork" button in the top right).
+<p align="center">
+  <img src="/data/figures/Figure_1.1.png" />
+  </br>
+  <b>Figure 1.1</b>
+</p>
+<p align="center">
+  <img src="/data/figures/Figure_1.2.png" />
+  </br>
+  <b>Figure 1.1</b>
+</p>
 
-2. Replace this README file with a description ([written in Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/about-writing-and-formatting-on-github)) of your solution. Regardless of your success, describe the problem you set out to solve and how you did it. Split it up into sections with headers, and, if relevant, include figures.
+DesicionTreeClassifier had an overall lack in accuracy for due to no changes/optimizations to its basic structure. The accuracy always lands around at 57% with the base model. For LabelPropagation, it was a bit of a different story, the model itself has really high (100%) for two of the classes, while one severely lack behind with a accuracy of only 28%. However, the really odd recall distribution is what concerns me. Recall itself is the ratio of true positives and true negatives. So for it to be really close to zero for two of the classes, and then really high recall for one class is odd. So I don't know if its just some pardoxical result or its a viable and good result.
 
-3. Make sure to include all relevant files in your fork. If you made the project in a Kaggle notebook, click **File** → **Download Notebook** to download it as an `.ipynb` file.
+For MLP Classifier, the state of the model itself changes every single training session. Without setting a seed for the Model, you will get inconsistent results. The two figures show this in effect.
 
-4. You may have to "clone" the fork you made to edit files locally on your computer and "push" them to GitHub. Learn how to do that [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
+<p align="center">
+  <img src="/data/figures/Figure_1.3.png" />
+  </br>
+  <b>Figure 1.3</b>
+</p>
+<p align="center">
+  <img src="/data/figures/MLPClassifier.png" />
+  </br>
+  <b>Figure 1.4</b>
+</p>
 
-4. Submit the link to your fork in this [form](http://apply.acmutd.co/research-coding-challenge).
+> Figure 1.3 is a visualization of the model without a set random state. Figure 1.4 is a visualization with a set random state.
 
-## No collaboration policy
+So with some changes to the model through setting some key parameters I improved the accuracy of the DecisionTreeClassifier. I changed the criterion parameter to log_loss, which improved upon the defualt option, however not by much. Then I also tried to change the class_weight to something the values all classes equally, however, I still did not see much of a change in accuracy. The following figure was what I was left with.
 
-**You may not collaborate with anyone on this challenge.** You _are_ allowed (and encouraged) to use internet documentation. If you use existing code (either from Github, Stack Overflow, or other sources), **please cite your sources in the README**.
+<p align="center">
+  <img src="/data/figures/DecisionTree.png" />
+  </br>
+  <b>Figure 1.5</b>
+</p>
 
-## Timing
+Since I found no success with the DecisionTreeClassifier, I moved on to label propagation changing the kernel and max_iter params, to see if I could get a more evenly distributed model, something not as paradoxical as before. Figure 1.6 showcases this model.
 
-Please don't spend too long on this project: **30 to 60 minutes** is reasonable. It's okay to put more time into your submission than that, but we don't expect you to get that much done; we really don't want this challenge to be a burden!
+<p align="center">
+  <img src="/data/figures/LabelPropagation.png" />
+  </br>
+  <b>Figure 1.5</b>
+</p>
 
-If you're *completely new* to this kind of project, however, it will likely take you more than an hour. This is a *densely useful* project to go through (you will learn a lot), so we believe this is justified.
+> When tested with some of my own test cases, the previous model performed way better in terms of accuracy of its results. So arguably maybe the previous version was better than this one.
 
-## Assessment criteria
+The only changes I made to the MLPClassifier was to add a set random_state to the model, so that its results were replicable. Figure 1.3 already showcases this.
 
-Submissions will be evaluated holistically, in combination with the rest of your application. We will consider your effort, use of external resources, how you approached the problem, and presentation, among other considerations.
+These were all the results for the different Models. However, there was something perticular about most of the trained models. For most the Good rating always did better than the Great, and Fair ratings. I think this probably due to the uneven distribution of Good, Great, and Fair in the training and testing sets. Maybe if I had equaly large training and testing data for the Great, and Fair classes, I would have better accuracy across the different Models used. I couldn't try out my hypothesis this time around, since I did not have access to some more data close to what was listed on Kradle.
 
-## Support and questions
+> On another note the visualizations shown in this ReadMe were made using the <a href="https://www.scikit-yb.org/">YellowBricks library</a>
 
-Feel free to ask for clarifications in the #research-qna channel in the [ACM UTD Discord server](https://discord.gg/nJxRdKdG4d)! You can also directly message Roman Hauksson on Discord: `RomanHauksson#3458`.
+I came into this whole coding challenge knowing very little about machine learning and classification with sklearn, however, while trying to solve my problem I figured out some key information regarding the library and classification tasks themselves that I might use in future models.
+
+## Conclusion
+Decision Trees are probably the best suited model for this classification task if we do not take into account the paradoxical Label propagation model. The MLP Classifier could have attained a higher accuracy if I could have found a good random state where it beatout the Decision Tree. The Label Propagtion (with param changes) wasn't far behind the Decision Tree, maybe I could have tuned it to work better than the Decision Tree. It could be said that tuning these models might result in higher accuracy, however, I think maybe a better distributed data set would have also increased the overall accuracy quite a bit.
+
+## Resources
+
+<a href="https://pandas.pydata.org/">Pandas</a><br/>
+<a href="https://scikit-learn.org/stable/">Sklearn library</a><br/>
+<a href="https://www.scikit-yb.org/">YellowBricks library</a><br/>
+<a href="https://en.wikipedia.org/wiki/Multiclass_classification">Classification Wiki</a><br/>
+<a href="https://machinelearningmastery.com/types-of-classification-in-machine-learning/">Classification Article</a><br/>
