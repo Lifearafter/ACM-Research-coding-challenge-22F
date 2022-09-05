@@ -7,7 +7,7 @@ I wanted to make a model that if fed some input's predicts the car's deal type (
 I used the pre-existing models in the <a href="https://scikit-learn.org/stable/">sklearn library</a> to basically do multiclass classification using the data provided.
 Since sklearn does not allow string inputs to its models, I had to do some preprocessing on the data.
 Most of the preprocessing was done in <a href="src/preprocessing.py">preprocessing.py</a>. 
-I got removed any columns that contained strings using the following code.
+I removed any columns that contained strings using the following code.
 
     new_data.drop(['Make','Model', 'Used/New','SellerType', 'SellerName', 'StreetName', 'State', 'ExteriorColor', 'InteriorColor', 'Drivetrain', 'FuelType', 'Transmission', 'Engine', 'VIN', 'Stock#'],axis=1,inplace=True)
  
