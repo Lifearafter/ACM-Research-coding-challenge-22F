@@ -34,9 +34,10 @@ def main():
     classifier = DecisionTreeClassifier(criterion='log_loss', class_weight=classweight)
     classifier.fit(x_train, y_train)
 
-    #classifierTwo = LabelPropagation()
+    classifierTwoParadox = LabelPropagation()
     classifierTwo = LabelPropagation(kernel='knn', max_iter=2000)
     classifierTwo.fit(x_train, y_train)
+    classifierTwoParadox.fit(x_train, y_train)
 
     #classifierThree = MLPClassifier()    
     classifierThree = MLPClassifier(random_state=10)
@@ -44,15 +45,16 @@ def main():
 
     #Predict Against testing set to determine accuracy of predictions
     y_pred = classifier.predict(x_test)
-
     print(classification_report(y_test, y_pred))
 
     y_pred = classifierTwo.predict(x_test)
-
+    print(classification_report(y_test, y_pred))
+    
+    y_pred = classifierTwoParadox.predict(x_test)
     print(classification_report(y_test, y_pred))
 
-    y_pred = classifierThree.predict(x_test)
 
+    y_pred = classifierThree.predict(x_test)
     print(classification_report(y_test, y_pred))
 
     classes = ['Great', 'Good', 'Fair']
