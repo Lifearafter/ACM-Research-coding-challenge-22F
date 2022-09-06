@@ -89,7 +89,7 @@ Since I found no notable success with the DecisionTreeClassifier, I moved on to 
 <p align="center">
   <img src="/data/figures/LabelPropagation.png" />
   </br>
-  <b>Figure 1.5</b>
+  <b>Figure 1.6</b>
 </p>
 
 > When tested with some of my own test cases, the previous model performed way better in terms of accuracy of its results. So arguably maybe the previous version was better than this one.

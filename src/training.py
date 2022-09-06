@@ -29,19 +29,21 @@ def main():
     y_train = training_data['DealType']
 
     #Train Classification models
-    #classifier = DecisionTreeClassifier()
     classweight = {0: 2.36875, 1: 1, 2:5.36320754717}
+    classifierOrig = DecisionTreeClassifier()
     classifier = DecisionTreeClassifier(criterion='log_loss', class_weight=classweight)
     classifier.fit(x_train, y_train)
+    classifierOrig.fit(x_train, y_train)
 
     classifierTwoParadox = LabelPropagation()
     classifierTwo = LabelPropagation(kernel='knn', max_iter=2000)
     classifierTwo.fit(x_train, y_train)
     classifierTwoParadox.fit(x_train, y_train)
 
-    #classifierThree = MLPClassifier()    
+    classifierThreeOrig = MLPClassifier()    
     classifierThree = MLPClassifier(random_state=10)
     classifierThree.fit(x_train, y_train)
+    classifierThreeOrig.fit(x_train, y_train) 
 
     #Predict Against testing set to determine accuracy of predictions
     y_pred = classifier.predict(x_test)
